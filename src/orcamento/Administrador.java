@@ -33,20 +33,38 @@ public class Administrador
 
     public String gerarId()
     {
-        Pattern pattern = Pattern.compile("^(?=(?:.*[A-Z]){2})(?=(?:.*[a-z]){2})(?=(?:.*\\d){2})[A-Za-z\\d]{7}$");
-        Matcher matcher;
-        String letras = "ABCDEFGHIJKLMNOPQRSTUVYWXZ1234567890abcdefghijklmnopqrstuvwxyz";
         Random random = new Random();
-        String randomString = "";
-        int index;
-        do {
+        String letrasMaiusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String letrasMinusculas = "abcdefghijklmnopqrstuvwxyz";
+        String numeros = "0123456789";
+
+        while (true) {
+            StringBuilder randomString = new StringBuilder();
+            int minCount = 0;
+            int maiCount = 0;
+            int numCount = 0;
+
             for (int i = 0; i < 7; i++) {
-                index = random.nextInt(letras.length());
-                randomString += letras.substring(index, index + 1);
+                int type = random.nextInt(3); // 0: minúscula, 1: maiúscula, 2: número
+
+                if (type == 0 && minCount < 2) {
+                    randomString.append(letrasMinusculas.charAt(random.nextInt(letrasMinusculas.length())));
+                    minCount++;
+                } else if (type == 1 && maiCount < 2) {
+                    randomString.append(letrasMaiusculas.charAt(random.nextInt(letrasMaiusculas.length())));
+                    maiCount++;
+                } else if (type == 2 && numCount < 3) {
+                    randomString.append(numeros.charAt(random.nextInt(numeros.length())));
+                    numCount++;
+                } else {
+                    i--; // If no valid character was added, stay on the same iteration
+                }
             }
-            matcher = pattern.matcher(randomString);
-        } while(!matcher.matches());
-        return randomString;
+
+            if (minCount == 2 && maiCount == 2 && numCount == 3) {
+                return randomString.toString();
+            }
+        }
     }
 
     /**

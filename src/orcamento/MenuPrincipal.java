@@ -23,6 +23,9 @@ public class MenuPrincipal {
         String email = "";
         String password;
 
+        Administrador denysson = new Administrador("Denysson", "denysson@gmail.com", "Devysson%03");
+        gestor.inserirUsuario(denysson);
+
         Cliente devysson = new Cliente("Devysson", "devyssonsc@gmail.com", "Devyla#03", 200, (double) 50);
         gestor.inserirUsuario(devysson);
 
@@ -38,6 +41,7 @@ public class MenuPrincipal {
 
         if(signOption == 1) {
             boolean loginRealizado = false;
+            String tipoUser = "";
             while(!loginRealizado) {
                 do {
                     System.out.print("Email: ");
@@ -47,12 +51,22 @@ public class MenuPrincipal {
                 do {
                     System.out.print("Senha: ");
                     password = input.nextLine();
-                } while(password.equals("")); //gestor.validarSenha(password)
+                } while(password.isEmpty()); //gestor.validarSenha(password)
 
-                loginRealizado = gestor.fazerLogin(email, password);
+                tipoUser = gestor.fazerLogin(email, password);
+
+                if(!tipoUser.isEmpty()){
+                    loginRealizado = true;
+                }
             }
             System.out.println("Login realizado!\n");
-            MenuCliente.mainClient(gestor, email);
+
+            if(tipoUser.equals("Administrador")){
+                MenuAdministrador.mainAdm(gestor, email);
+            } else{
+                MenuCliente.mainClient(gestor, email);
+            }
+
         } else {
             String nome;
             int consumoUltimoMes;

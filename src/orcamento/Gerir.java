@@ -4,8 +4,7 @@
 package orcamento;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -14,12 +13,7 @@ import org.apache.commons.validator.routines.EmailValidator;
  */
 public class Gerir {
     private ArrayList<Administrador> listaUtilizadores;
-    private static final String PASSWORD_PATTERN =
-            "^(?=.*[0-9])" +          // pelo menos um dígito
-                    "(?=.*[a-z])" +           // pelo menos uma letra minúscula
-                    "(?=.*[A-Z])" +           // pelo menos uma letra maiúscula
-                    "(?=.*[@#$%&])" +      // pelo menos um caractere especial
-                    ".{8,}$";                 // pelo menos 1 caractere no total
+    private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\\W_]).{8,}$\n";
 
     private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
     /**
@@ -29,7 +23,7 @@ public class Gerir {
         listaUtilizadores = new ArrayList<>();
     }
 
-    public void inserirUsuario(Cliente newCliente)
+    public void inserirUsuario(Administrador newCliente)
     {
         listaUtilizadores.add(newCliente);
     }
@@ -60,19 +54,25 @@ public class Gerir {
         return matcher.matches();
     }
 
-    public boolean fazerLogin(String email, String password) {
+    public String fazerLogin(String email, String password) {
+        boolean encontrou = false;
         for(Administrador utilizador:listaUtilizadores) {
             if(utilizador.getEmail().equals(email)) {
+                encontrou = true;
                 if(utilizador.getPassword().equals(password)) {
-                    return true;
+                    System.out.println(utilizador.getClass().getSimpleName());
+                    return utilizador.getClass().getSimpleName();
                 }
-            } else {
-                System.out.println("Usuário não encontrado.\n");
-                return false;
             }
+
         }
-        System.out.println("E-mail ou senha incorretos!\n");
-        return false;
+        if(encontrou){
+            System.out.println("E-mail ou senha incorretos!\n");
+            return "";
+        }
+
+        System.out.println("Usuário não encontrado.\n");
+        return "";
     }
 
     /**
